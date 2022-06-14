@@ -23,6 +23,7 @@ app.use((req, res, next) => {
     next(err)
 })
 
+// 2nd method for error handling
 // if next function calls next it will trigger the error handler function is like below
 
 app.use((err, req, res, next) => {

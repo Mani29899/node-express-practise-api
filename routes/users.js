@@ -11,9 +11,20 @@ let users = [];
 router.get('/', (req, res) => {
     res.send(users)
 });
+
 // for posting the data from the front end to the server inside the server
-router.post('/', (req, res) => {
+router.post('/', (req, res ,next) => {
     const user = req.body;
+
+
+    let length = Object.keys(user).length;
+    
+    if (!length) {
+         const err = new Error('user details not found');
+         err.status = 400;
+         console.log(req.body ,'user')
+         next(err)
+    }
 
     const userid = uuidv4();
 
@@ -31,12 +42,19 @@ router.post('/', (req, res) => {
 })
 
 // for selecting the unique id
-router.get('/:id', (req, res) => {
+router.get('/:id', (req, res,next) => {
     const {
         id
     } = req.params;
 
+
     const selectedUser = users.find((item) => {
+        if (item.id !== id) {
+            const err = new Error("user Id not found")
+            err.status = 400;
+            return  next(err)
+        }
+
         return item.id === id
     })
     res.send(selectedUser)
@@ -49,6 +67,11 @@ router.delete('/:id', (req, res) => {
     } = req.params;
 
     users = users.filter((item) => {
+         if (item.id !== id) {
+             const err = new Error("user Id not found")
+             err.status = 400;
+             return next(err)
+         }
         return item.id !== id
     })
 
@@ -64,7 +87,14 @@ router.patch('/:id', (req, res) => {
 
     const { firstname, lastname, age } = req.body;
 
-     users = users.find((item) => item.id === id)
+    users = users.find((item) => { 
+        if (item.id !== id) {
+            const err = new Error("user Id not found")
+            err.status = 400;
+            return next(err)
+        }
+        return item.id === id
+    })
 
     if (firstname) {
         users.firstname = firstname
