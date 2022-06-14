@@ -11,8 +11,6 @@ let users = [];
 router.get('/', (req, res) => {
     res.send(users)
 });
-
-
 // for posting the data from the front end to the server inside the server
 router.post('/', (req, res) => {
     const user = req.body;

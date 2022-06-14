@@ -11,8 +11,30 @@ const PORT = 8000;
 // to parse the payload value from  the req from the client to the server
 app.use(bodyParser.json());
 
-// use the userSRoutes
+// use the userSRoutes it works as a middleware
 app.use('/users/', userRoutes)
+
+// if user hit wrong path for handling error
+
+// 1st method but its not a proper way
+app.use((req, res, next) => {
+    const err = new Error("Not Found");
+    err.status = 404;
+    next(err)
+})
+
+// if next function calls next it will trigger the error handler function is like below
+
+app.use((err, req, res, next) => {
+    res.status(err.status || 500);
+    res.send({
+        error: {
+            status: err.status || 500,
+            message: err.message
+        }
+    })
+})
+
 
 /* app.get()  ----> this method have two parameters one is "url path" and another one is callback function ..in that
  callback function we have two parameters one is requset which is get from the client to the server and another one is 
